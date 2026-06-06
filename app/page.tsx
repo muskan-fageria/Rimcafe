@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion, AnimatePresence, useScroll, useTransform } from "framer-motion";
 import { 
   Coffee, 
   Sparkles, 
@@ -18,7 +18,7 @@ import {
 import HeritageSection from "@/components/HeritageSection";
 import FiligreeDivider from "@/components/FiligreeDivider";
 
-// Ornate Corner SVG Component for adding architectural details to panels
+// Symmetrical Ornate Corner SVG Component
 const CornerOrnament = ({ position }: { position: "top-left" | "top-right" | "bottom-left" | "bottom-right" }) => {
   const rotationClass = {
     "top-left": "",
@@ -49,7 +49,7 @@ const CornerOrnament = ({ position }: { position: "top-left" | "top-right" | "bo
   );
 };
 
-// Ornate Architectural Pediment SVG for Title Headers
+// Ornate Architectural Pediment SVG
 const OrnatePediment = () => {
   return (
     <svg 
@@ -58,19 +58,43 @@ const OrnatePediment = () => {
       fill="none" 
       xmlns="http://www.w3.org/2000/svg"
     >
-      {/* Base horizontal structure line */}
       <line x1="10" y1="32" x2="190" y2="32" stroke="currentColor" strokeWidth="1.25" />
-      {/* Upper arch lines */}
       <path d="M 15 32 C 45 12, 80 8, 100 8 C 120 8, 155 12, 185 32" stroke="currentColor" strokeWidth="1" fill="none" />
       <path d="M 35 32 C 60 20, 80 16, 100 16 C 120 16, 140 20, 165 32" stroke="currentColor" strokeWidth="0.75" fill="none" />
-      {/* Center crest design */}
       <path d="M 100 4 Q 95 14 100 24 Q 105 14 100 4 Z" fill="currentColor" />
       <circle cx="100" cy="1" r="1.5" fill="currentColor" />
-      {/* Hanging drop ornaments */}
       <circle cx="65" cy="24" r="1.2" fill="currentColor" />
       <circle cx="135" cy="24" r="1.2" fill="currentColor" />
       <circle cx="100" cy="28" r="1.8" fill="currentColor" />
     </svg>
+  );
+};
+
+// Rotating Heritage Seal Badge Component
+const HeritageSeal = () => {
+  return (
+    <div className="absolute right-8 top-24 z-30 hidden lg:block select-none pointer-events-none">
+      <div className="relative w-36 h-36 flex items-center justify-center">
+        {/* Rotating Circular Text SVG */}
+        <motion.svg 
+          animate={{ rotate: 360 }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          className="w-full h-full text-[#d4af37]/60"
+          viewBox="0 0 100 100"
+        >
+          <path id="sealCirclePath" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" fill="none" />
+          <text className="font-sans text-[6px] uppercase tracking-[0.24em] font-bold fill-current">
+            <textPath href="#sealCirclePath">
+              Rim Cafe Philadelphia • Est. 1982 • Chocolate Hearth •
+            </textPath>
+          </text>
+        </motion.svg>
+        {/* Central pulsing gold logo circle */}
+        <div className="absolute w-16 h-16 rounded-full border-2 border-[#d4af37]/35 flex items-center justify-center bg-[#120a06]/90 backdrop-blur-md shadow-2xl">
+          <Coffee className="text-[#d4af37] w-6 h-6 animate-pulse" />
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -136,6 +160,22 @@ const CATEGORIES = [
 export default function Home() {
   const [activeCategory, setActiveCategory] = useState("espresso");
 
+  // Parallax Scroll Targets
+  const craftSectionRef = useRef<HTMLDivElement>(null);
+  const menuSectionRef = useRef<HTMLDivElement>(null);
+
+  const { scrollYProgress: craftScrollProgress } = useScroll({
+    target: craftSectionRef,
+    offset: ["start end", "end start"]
+  });
+  const yCraftImage = useTransform(craftScrollProgress, [0, 1], [-45, 45]);
+
+  const { scrollYProgress: menuScrollProgress } = useScroll({
+    target: menuSectionRef,
+    offset: ["start end", "end start"]
+  });
+  const yMenuShowcaseCard = useTransform(menuScrollProgress, [0, 1], [-25, 25]);
+
   const handleScroll = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
@@ -144,7 +184,10 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-noise text-[#f5ebe0] overflow-x-hidden bg-transparent">
+    <div className="relative min-h-screen bg-noise bg-drafting-grid text-[#f5ebe0] overflow-x-hidden bg-transparent">
+      {/* Heritage rotating seal badge */}
+      <HeritageSeal />
+
       {/* Floating Premium Header */}
       <header className="fixed top-0 left-0 right-0 z-50 bg-[#120a06]/90 backdrop-blur-md border-b border-[#c59b27]/25 px-6 py-4 transition-all duration-300">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
@@ -257,13 +300,13 @@ export default function Home() {
       <FiligreeDivider />
 
       {/* Section B: The Craft (Signature Feature) */}
-      <section id="craft" className="py-24 px-6 md:px-12 bg-brick-overlay relative overflow-hidden">
+      <section id="craft" ref={craftSectionRef} className="py-24 px-6 md:px-12 bg-brick-overlay relative overflow-hidden">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
           
-          {/* Left Column: Crema Espresso Image inside Roman Cathedral Arch */}
+          {/* Left Column: Crema Espresso Image inside Roman Cathedral Arch with Scroll Parallax */}
           <div className="lg:col-span-5 relative">
             <HeritageSection>
-              <div className="relative h-[390px] sm:h-[490px] w-full max-w-md mx-auto group">
+              <motion.div style={{ y: yCraftImage }} className="relative h-[390px] sm:h-[490px] w-full max-w-md mx-auto group">
                 {/* Glowing gold arch backdrop */}
                 <div className="absolute -inset-2 rounded-t-full bg-gradient-to-b from-[#d4af37] to-[#7a0f12] opacity-25 blur-md group-hover:opacity-40 transition duration-700" />
                 {/* Roman Arch Gold Frame */}
@@ -277,7 +320,7 @@ export default function Home() {
                     />
                   </div>
                 </div>
-              </div>
+              </motion.div>
             </HeritageSection>
           </div>
 
@@ -298,21 +341,30 @@ export default function Home() {
             {/* Highlights Grid with Readability backing plates */}
             <HeritageSection delay={0.4}>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
-                <div className="p-5 border-l-2 border-[#7a0f12] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md">
+                <motion.div 
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  className="p-5 border-l-2 border-[#7a0f12] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md cursor-pointer transition duration-300"
+                >
                   <CornerOrnament position="top-right" />
                   <h3 className="font-serif italic text-lg text-[#d4af37] font-semibold">Volcano Chocolate</h3>
                   <p className="text-xs text-stone-200 mt-2 font-medium">Our trademark molten chocolate poured down the glass rim.</p>
-                </div>
-                <div className="p-5 border-l-2 border-[#c59b27] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md">
+                </motion.div>
+                <motion.div 
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  className="p-5 border-l-2 border-[#c59b27] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md cursor-pointer transition duration-300"
+                >
                   <CornerOrnament position="top-right" />
                   <h3 className="font-serif italic text-lg text-[#d4af37] font-semibold">Holy Cannoli</h3>
                   <p className="text-xs text-stone-200 mt-2 font-medium">Homemade cream whisked with mascarpone and ricotta cheese.</p>
-                </div>
-                <div className="p-5 border-l-2 border-[#7a0f12] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md">
+                </motion.div>
+                <motion.div 
+                  whileHover={{ scale: 1.03, y: -4 }}
+                  className="p-5 border-l-2 border-[#7a0f12] bg-[#120a06]/85 border border-stone-800/40 rounded-r-md relative shadow-md cursor-pointer transition duration-300"
+                >
                   <CornerOrnament position="top-right" />
                   <h3 className="font-serif italic text-lg text-[#d4af37] font-semibold">Espresso Cubano</h3>
                   <p className="text-xs text-stone-200 mt-2 font-medium">Robust extraction pulled directly over raw caramelized sugar.</p>
-                </div>
+                </motion.div>
               </div>
             </HeritageSection>
 
@@ -383,7 +435,7 @@ export default function Home() {
       <FiligreeDivider />
 
       {/* Section D: The Full Interactive Menu Explorer */}
-      <section id="menu-explorer" className="py-24 px-6 md:px-12 bg-brick-overlay relative">
+      <section id="menu-explorer" ref={menuSectionRef} className="py-24 px-6 md:px-12 bg-brick-overlay relative">
         <div className="max-w-6xl mx-auto">
           
           <HeritageSection className="text-center mb-12">
@@ -465,9 +517,12 @@ export default function Home() {
               </AnimatePresence>
             </div>
 
-            {/* Right details frame with corresponding image styled inside a Roman Arch frame */}
+            {/* Right details frame styled inside a Roman Arch frame with scroll parallax */}
             <HeritageSection delay={0.3} className="sticky top-28">
-              <div className="border border-[#c59b27]/30 bg-[#120a06]/95 p-8 rounded-sm text-center shadow-xl box-glow-amber relative">
+              <motion.div 
+                style={{ y: yMenuShowcaseCard }}
+                className="border border-[#c59b27]/30 bg-[#120a06]/95 p-8 rounded-sm text-center shadow-xl box-glow-amber relative"
+              >
                 {/* Architectural Corner Ornaments */}
                 <CornerOrnament position="top-left" />
                 <CornerOrnament position="top-right" />
@@ -505,7 +560,7 @@ export default function Home() {
                 <span className="font-sans text-[10px] tracking-[0.25em] text-[#d4af37] uppercase font-bold">
                   Est. 1982 • Rim Cafe Philadelphia
                 </span>
-              </div>
+              </motion.div>
             </HeritageSection>
 
           </div>
