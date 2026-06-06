@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #120a06;
+  --foreground: #f5ebe0;
+  
+  --color-espresso-dark: #120a06;
+  --color-espresso-base: #1a0f0a;
+  --color-espresso-light: #261710;
+  
+  --color-crimson-dark: #5c0b0d;
+  --color-crimson-base: #7a0f12;
+  --color-crimson-light: #8b1418;
+  
+  --color-gold-dark: #a3821a;
+  --color-gold-base: #c59b27;
+  --color-gold-light: #d4af37;
+  
+  --color-cream-dark: #e3d5ca;
+  --color-cream-base: #f5ebe0;
+  --color-cream-light: #faf6f0;
+}
+
+body {
+  color: var(--foreground);
+  /* Ornate multi-color gradient background (Golden amber, crimson red, espresso black) */
+  background: 
+    radial-gradient(circle at 10% 15%, rgba(122, 15, 18, 0.16) 0%, transparent 40%),
+    radial-gradient(circle at 90% 30%, rgba(197, 155, 39, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 35% 65%, rgba(122, 15, 18, 0.15) 0%, transparent 45%),
+    radial-gradient(circle at 80% 85%, rgba(197, 155, 39, 0.12) 0%, transparent 40%),
+    linear-gradient(to bottom, #120a06 0%, #170d08 40%, #0a0503 100%);
+  background-attachment: fixed;
+  font-feature-settings: "kern" 1, "liga" 1;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-espresso-dark);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-espresso-light);
+  border: 1px solid var(--color-espresso-dark);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold-base);
+}
+
+/* Premium Web Artistry Utilities */
+@layer utilities {
+  .text-glow-gold {
+    text-shadow: 0 0 16px rgba(212, 175, 55, 0.35);
+  }
+  
+  .text-glow-crimson {
+    text-shadow: 0 0 16px rgba(139, 20, 24, 0.45);
+  }
+
+  .box-glow-amber {
+    box-shadow: 0 0 50px -10px rgba(197, 155, 39, 0.22);
+  }
+
+  .box-glow-crimson {
+    box-shadow: 0 0 50px -10px rgba(139, 20, 24, 0.28);
+  }
+
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.045'/%3E%3C/svg%3E");
+  }
+
+  /* Brick overlay with transparency to allow fixed background glow to bleed through */
+  .bg-brick-overlay {
+    background-image: linear-gradient(
+      rgba(18, 10, 6, 0.82),
+      rgba(26, 15, 10, 0.78)
+    ),
+    url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h40v20H0V0zm20 20h20v20H20V20z' fill='%23261710' fill-opacity='0.08' fill-rule='evenodd'/%3E%3C/svg%3E");
+  }
+
+  .italian-tricolor-line {
+    background: linear-gradient(
+      to right,
+      #1d4b27 33.3%,
+      #f5ebe0 33.3 66.6%,
+      #8b1418 66.6%
+    );
+  }
+
+  /* Architectural Roman/Cathedral Arch Frame */
+  .roman-arch-frame {
+    border-top-left-radius: 9999px;
+    border-top-right-radius: 9999px;
+    overflow: hidden;
+  }
+
+  /* Backdrop Plates for high text readability */
+  .readability-plate {
+    background-color: rgba(18, 10, 6, 0.90);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(197, 155, 39, 0.15);
+  }
+}
